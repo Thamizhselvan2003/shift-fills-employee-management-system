@@ -1,0 +1,111 @@
+<main class="dashboard">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">PEOPLE OPERATIONS</p>
+      <h1>Employee Management System</h1>
+      <p class="page-description">Manage your team details in one place.</p>
+    </div>
+    <div class="employee-count" aria-label="Total employees">
+      <span class="count-number">{{ employees.length }}</span>
+      <span class="count-label">Total employees</span>
+    </div>
+  </header>
+
+  @if (statusMessage) {
+    <p class="notice success-notice" role="status">{{ statusMessage }}</p>
+  }
+  @if (errorMessage) {
+    <p class="notice error-notice" role="alert">{{ errorMessage }}</p>
+  }
+
+  @if (showForm) {
+    <app-employee-form
+      [employee]="selectedEmployee"
+      (saved)="onEmployeeSaved()"
+      (cancelled)="closeForm()"
+    />
+  }
+
+  <section class="employee-panel" aria-labelledby="employee-list-heading">
+    <div class="panel-heading">
+      <div>
+        <h2 id="employee-list-heading">Employees</h2>
+        <p class="panel-description">View and manage employee records.</p>
+      </div>
+      <button class="button button-primary" type="button" (click)="openAddForm()">
+        <span aria-hidden="true">+</span>
+        Add Employee
+      </button>
+    </div>
+
+    <label class="search-field">
+      <span class="visually-hidden">Search employees by name</span>
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        placeholder="Search by employee name..."
+        [value]="searchTerm"
+        (input)="updateSearch($event)"
+      />
+    </label>
+
+    @if (loading) {
+      <p class="list-message" role="status">Loading employees...</p>
+    } @else if (employees.length === 0 && !errorMessage) {
+      <div class="list-message empty-message">
+        <span class="empty-icon" aria-hidden="true">◎</span>
+        <h3>No employees yet</h3>
+        <p>Add an employee to get started.</p>
+      </div>
+    } @else if (filteredEmployees.length === 0 && !errorMessage) {
+      <p class="list-message">No employees match “{{ searchTerm }}”. Try another name.</p>
+    } @else if (filteredEmployees.length > 0) {
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Department</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (employee of filteredEmployees; track employee.id) {
+              <tr>
+                <td class="employee-id">#{{ employee.id }}</td>
+                <td>
+                  <span class="employee-name">{{ employee.name }}</span>
+                </td>
+                <td class="employee-email">{{ employee.email }}</td>
+                <td><span class="department-tag">{{ employee.department }}</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button
+                      class="button button-edit"
+                      type="button"
+                      (click)="editEmployee(employee)"
+                      [attr.aria-label]="'Edit ' + employee.name"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="button button-delete"
+                      type="button"
+                      (click)="deleteEmployee(employee)"
+                      [disabled]="deletingId === employee.id"
+                      [attr.aria-label]="'Delete ' + employee.name"
+                    >
+                      {{ deletingId === employee.id ? 'Deleting...' : 'Delete' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>

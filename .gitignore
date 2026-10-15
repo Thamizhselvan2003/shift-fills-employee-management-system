@@ -1,0 +1,24 @@
+# Local environment files and credentials
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build and test output
+dist/
+out-tsc/
+coverage/
+.angular/cache/
+tmp/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Local editor and operating system files
+.idea/
+.history/
+.DS_Store
+Thumbs.db

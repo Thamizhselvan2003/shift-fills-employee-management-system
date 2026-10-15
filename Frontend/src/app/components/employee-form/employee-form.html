@@ -1,0 +1,90 @@
+<section class="form-panel" aria-labelledby="form-heading">
+  <div class="form-heading">
+    <div>
+      <p class="form-eyebrow">{{ employee ? 'UPDATE RECORD' : 'NEW RECORD' }}</p>
+      <h2 id="form-heading">{{ employee ? 'Edit employee' : 'Add an employee' }}</h2>
+    </div>
+    <button class="close-button" type="button" (click)="cancelForm()" aria-label="Close form">
+      ×
+    </button>
+  </div>
+
+  @if (successMessage) {
+    <p class="form-notice success-notice" role="status">{{ successMessage }}</p>
+  }
+  @if (errorMessage) {
+    <p class="form-notice error-notice" role="alert">{{ errorMessage }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+    <div class="form-fields">
+      <div class="form-field">
+        <label for="employee-name">Full name</label>
+        <input
+          id="employee-name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g. Alex Morgan"
+          autocomplete="name"
+          [class.invalid-input]="form.controls.name.invalid && form.controls.name.touched"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <span class="validation-message">
+            @if (
+              form.controls.name.hasError('required') ||
+              form.controls.name.hasError('pattern')
+            ) {
+              Full name is required.
+            } @else if (form.controls.name.hasError('minlength')) {
+              Name must be at least 2 characters.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="employee-email">Email address</label>
+        <input
+          id="employee-email"
+          type="email"
+          formControlName="email"
+          placeholder="e.g. alex@example.com"
+          autocomplete="email"
+          [class.invalid-input]="form.controls.email.invalid && form.controls.email.touched"
+        />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <span class="validation-message">
+            @if (form.controls.email.hasError('required')) {
+              Email is required.
+            } @else if (form.controls.email.hasError('email')) {
+              Enter a valid email address.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="employee-department">Department</label>
+        <input
+          id="employee-department"
+          type="text"
+          formControlName="department"
+          placeholder="e.g. Human Resources"
+          [class.invalid-input]="form.controls.department.invalid && form.controls.department.touched"
+        />
+        @if (form.controls.department.invalid && form.controls.department.touched) {
+          <span class="validation-message">Department is required.</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="form-button button-secondary" type="button" (click)="cancelForm()">
+        Cancel
+      </button>
+      <button class="form-button button-submit" type="submit" [disabled]="saving">
+        {{ saving ? 'Saving...' : employee ? 'Save changes' : 'Add employee' }}
+      </button>
+    </div>
+  </form>
+</section>
